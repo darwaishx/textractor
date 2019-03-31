@@ -5,7 +5,6 @@ from helper import AwsHelper, FileHelper
 class Input:
 
     def __init__(self):
-        ''' Constructor. '''
         self.bucketName = ""
         self.documentPath = ""
         self.awsRegion = "us-east-1"
@@ -16,23 +15,23 @@ class Input:
         self.isLocalDocument = False
         self.documentType = ""
 
-    def print(self):
-        print("---------------------------------------------")
+    def __str__(self):
+        s = "---------------------------------------------\n"
         if(not self.isLocalDocument):
-            print("Bucket Name: {}".format(self.bucketName))
-        print("Document: {}".format(self.documentPath))
-        print("Text: {}".format(self.detectText))
-        print("Form: {}".format(self.detectForms))
-        print("Table: {}".format(self.detectTables))
-        print("AWS Region: {}".format(self.awsRegion))
-        print("---------------------------------------------")
+            s = s + "Bucket Name: {}\n".format(self.bucketName)
+        s = s + "Document: {}\n".format(self.documentPath)
+        s = s + "Text: {}\n".format(self.detectText)
+        s = s + "Form: {}\n".format(self.detectForms)
+        s = s + "Table: {}\n".format(self.detectTables)
+        s = s + "AWS Region: {}".format(self.awsRegion)
+        s = s + "---------------------------------------------\n"
 
 class ImageProcessor:
     def __init__(self, inputParameters):
         ''' Constructor. '''
         self.inputParameters = inputParameters
 
-    def callTextract(self):
+    def _callTextract(self):
         textract = AwsHelper().getClient('textract', self.inputParameters.awsRegion)
         if(not self.inputParameters.detectForms and not self.inputParameters.detectTables):
             if(self.inputParameters.isLocalDocument):
@@ -77,15 +76,14 @@ class ImageProcessor:
         return response
 
     def run(self):
-        response = self.callTextract()
+        response = self._callTextract()
         return response
 
 class PdfProcessor:
     def __init__(self, inputParameters):
-        ''' Constructor. '''
         self.inputParameters = inputParameters
 
-    def startJob(self):
+    def _startJob(self):
         response = None
         client = AwsHelper().getClient('textract', self.inputParameters.awsRegion)
         if(not self.inputParameters.detectForms and not self.inputParameters.detectTables):
@@ -115,7 +113,7 @@ class PdfProcessor:
 
         return response["JobId"]
 
-    def isJobComplete(self, jobId):
+    def _isJobComplete(self, jobId):
         time.sleep(5)
         client = AwsHelper().getClient('textract', self.inputParameters.awsRegion)
         if(not self.inputParameters.detectForms and not self.inputParameters.detectTables):
@@ -136,7 +134,7 @@ class PdfProcessor:
 
         return status
 
-    def getJobResults(self, jobId):
+    def _getJobResults(self, jobId):
 
         pages = []
 
@@ -175,17 +173,16 @@ class PdfProcessor:
         return pages
 
     def run(self):
-        jobId = self.startJob()
+        jobId = self._startJob()
         print("Started Asyc Job with Id: {}".format(jobId))
-        status = self.isJobComplete(jobId)
+        status = self._isJobComplete(jobId)
         if(status == "SUCCEEDED"):
-            responsePages = self.getJobResults(jobId)
+            responsePages = self._getJobResults(jobId)
             return responsePages
 
 class DocumentProcessor:
 
     def __init__(self, bucketName, documentPath, awsRegion, detectText, detectForms, detectTables):
-        ''' Constructor. '''
 
         ip = Input()
         if(bucketName):
@@ -226,8 +223,6 @@ class DocumentProcessor:
         self.inputParameters = ip
 
     def run(self):
-        #print("Document Details:")
-        #self.inputParameters.print()
 
         print("Calling Textract...")
 

@@ -48,7 +48,7 @@ def run():
     doc = Document(response)
 
     #print(doc)
-    traverseDocument(doc)
-    #generateOutput(filePath, response)
+    #traverseDocument(doc)
+    generateOutput(filePath, response)
 
 run()

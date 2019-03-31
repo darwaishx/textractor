@@ -46,13 +46,13 @@ Tool generates several files in the format below:
 
 #### Insights related output files
 
-- document-page-n-text-translation.txt: Translation of detected text for each page in the document.
-- document-page-n-insights-entities.json: Entities in detected text for each page in the document.
-- document-page-n-insights-sentiment.json: Sentiment in detected text for each page in the document.
-- document-page-n-insights-keyPhrases.json: Key phrases in detected text for each page in the document.
-- document-page-n-insights-syntax.json: Syntax in detected text for each page in the document.
-- document-page-n-medical-insights-entities.json: Medical entities in detected text for each page in the document.
+- document-page-n-insights-entities.csv: Entities in detected text for each page in the document.
+- document-page-n-insights-sentiment.csv: Sentiment in detected text for each page in the document.
+- document-page-n-insights-keyPhrases.csv: Key phrases in detected text for each page in the document.
+- document-page-n-insights-syntax.csv: Syntax in detected text for each page in the document.
+- document-page-n-medical-insights-entities.csv: Medical entities in detected text for each page in the document.
 - document-page-n-medical-insights-phi.json: Phi in detected text for each page in the document.
+- document-page-n-text-translation.txt: Translation of detected text for each page in the document.
 
 ## Arguments
 

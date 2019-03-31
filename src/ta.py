@@ -29,7 +29,7 @@ class TextMedicalAnalyzer:
         response = self.client.detect_entities(
             Text=text,
         )
-        return response['Entities']
+        return response
 
     def getPhi(self, text):
         response = self.client.detect_phi(
@@ -49,8 +49,7 @@ class TextAnalyzer:
             Text=text,
             LanguageCode=self.languageCode
         )
-        sm = response["Sentiment"]
-        return sm
+        return response
 
     def getSyntax(self, text):
         response = self.client.detect_syntax(
@@ -58,18 +57,18 @@ class TextAnalyzer:
             LanguageCode=self.languageCode
         )
 
-        return response['SyntaxTokens']
+        return response
 
     def getEntities(self, text):
         response = self.client.detect_entities(
             Text=text,
             LanguageCode=self.languageCode
         )
-        return response['Entities']
+        return response
 
     def getKeyPhrases(self, text):
         response = self.client.detect_key_phrases(
             Text=text,
             LanguageCode=self.languageCode
         )
-        return response['KeyPhrases']
+        return response
