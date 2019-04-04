@@ -114,7 +114,7 @@ print(doc.pages[0].form.fields[0].key.text)
 print(doc.pages[0].form.fields[0].value.text)
 
 field = page.form.getFieldByName("Key")
-print(field.text.text)
+print(field.key.text)
 print(field.value.text)
 
 ```
