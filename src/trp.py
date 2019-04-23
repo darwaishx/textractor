@@ -223,6 +223,7 @@ class Form:
         self._fieldsMap = {}
 
     def addField(self, field):
+        print(field)
         self._fields.append(field)
         self._fieldsMap[field.key.text] = field
 
@@ -397,8 +398,9 @@ class Page:
             elif item["BlockType"] == "KEY_VALUE_SET":
                 if 'KEY' in item['EntityTypes']:
                     f = Field(item, blockMap)
-                    self._form.addField(f)
-                    self._content.append(f)
+                    if(f.key):
+                        self._form.addField(f)
+                        self._content.append(f)
 
     def getLinesInReadingOrder(self):
         columns = []

@@ -131,35 +131,35 @@ class Textractor:
         except Exception as e:
             self.printFormatException(e)
 
-        try:
-            i = 1
-            totalDocuments = len(ips["documents"])
+        #try:
+        i = 1
+        totalDocuments = len(ips["documents"])
 
-            print("\n")
-            print('*' * 60)
-            print("Total input documents: {}".format(totalDocuments))
-            print('*' * 60)
+        print("\n")
+        print('*' * 60)
+        print("Total input documents: {}".format(totalDocuments))
+        print('*' * 60)
 
-            for document in ips["documents"]:
-                self.processDocument(ips, i, document)
+        for document in ips["documents"]:
+            self.processDocument(ips, i, document)
 
-                remaining = len(ips["documents"])-i
+            remaining = len(ips["documents"])-i
 
-                if(remaining > 0):
-                    print("\nRemaining documents: {}".format(remaining))
+            if(remaining > 0):
+                print("\nRemaining documents: {}".format(remaining))
 
-                    print("\nTaking a short break...")
-                    time.sleep(20)
-                    print("Allright, ready to go...\n")
+                print("\nTaking a short break...")
+                time.sleep(20)
+                print("Allright, ready to go...\n")
 
-                i = i + 1
+            i = i + 1
 
-            print("\n")
-            print('*' * 60)
-            print("Successfully textracted documents: {}".format(totalDocuments))
-            print('*' * 60)
-            print("\n")
-        except Exception as e:
-            print("Something went wrong:\n====================================================\n{}".format(e))
+        print("\n")
+        print('*' * 60)
+        print("Successfully textracted documents: {}".format(totalDocuments))
+        print('*' * 60)
+        print("\n")
+        #except Exception as e:
+        #    print("Something went wrong:\n====================================================\n{}".format(e))
 
 Textractor().run()
