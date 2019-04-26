@@ -110,7 +110,8 @@ class Line:
             for rs in block['Relationships']:
                 if(rs['Type'] == 'CHILD'):
                     for cid in rs['Ids']:
-                        self._words.append(Word(blockMap[cid], blockMap))
+                        if(blockMap[cid]["BlockType"] == "WORD"):
+                            self._words.append(Word(blockMap[cid], blockMap))
     def __str__(self):
         s = "Line\n==========\n"
         s = s + self._text + "\n"
@@ -223,7 +224,6 @@ class Form:
         self._fieldsMap = {}
 
     def addField(self, field):
-        print(field)
         self._fields.append(field)
         self._fieldsMap[field.key.text] = field
 
@@ -256,9 +256,13 @@ class Cell:
             for rs in block['Relationships']:
                 if(rs['Type'] == 'CHILD'):
                     for cid in rs['Ids']:
-                        w = Word(blockMap[cid], blockMap)
-                        self._content.append(w)
-                        self._text = self._text + w.text + ' '
+                        blockType = blockMap[cid]["BlockType"]
+                        if(blockType == "WORD"):
+                            w = Word(blockMap[cid], blockMap)
+                            self._content.append(w)
+                            self._text = self._text + w.text + ' '
+                        #elif(blockType == "SELECTION_ELEMENT"):
+                            #print(blockMap[cid])
 
     def __str__(self):
         return self._text
@@ -398,9 +402,14 @@ class Page:
             elif item["BlockType"] == "KEY_VALUE_SET":
                 if 'KEY' in item['EntityTypes']:
                     f = Field(item, blockMap)
+                    #print(f)
                     if(f.key):
                         self._form.addField(f)
                         self._content.append(f)
+                    else:
+                        print("Bad Key")
+                        print(f)
+                        print(item)
 
     def getLinesInReadingOrder(self):
         columns = []
