@@ -25,14 +25,18 @@ class OutputGenerator:
             csvItem  = []
             if(field.key):
                 csvItem.append(field.key.text)
+                csvItem.append(field.key.confidence)
             else:
+                csvItem.append("")
                 csvItem.append("")
             if(field.value):
                 csvItem.append(field.value.text)
+                csvItem.append(field.value.confidence)
             else:
                 csvItem.append("")
+                csvItem.append("")
             csvData.append(csvItem)
-        csvFieldNames = ['Key', 'Value']
+        csvFieldNames = ['Key', 'KeyConfidence', 'Value', 'ValueConfidence']
         FileHelper.writeCSV("{}-page-{}-forms.csv".format(self.fileName, p), csvFieldNames, csvData)
 
     def _outputTable(self, page, p):
