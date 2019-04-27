@@ -140,7 +140,31 @@ class Line:
     def text(self):
         return self._text
 
-class FieldSet:
+class SelectionElement:
+    def __init__(self, block, blockMap):
+        self._confidence = block['Confidence']
+        self._geometry = Geometry(block['Geometry'])
+        self._id = block['Id']
+        self._selectionStatus = block['SelectionStatus']
+
+    @property
+    def confidence(self):
+        return self._confidence
+
+    @property
+    def geometry(self):
+        return self._geometry
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def selectionStatus(self):
+        return self._selectionStatus
+
+
+class FieldKey:
     def __init__(self, block, children, blockMap):
         self._confidence = block['Confidence']
         self._geometry = Geometry(block['Geometry'])
@@ -183,6 +207,53 @@ class FieldSet:
     def text(self):
         return self._text
 
+class FieldValue:
+    def __init__(self, block, children, blockMap):
+        self._confidence = block['Confidence']
+        self._geometry = Geometry(block['Geometry'])
+        self._id = block['Id']
+        self._text = ""
+        self._content = []
+
+        t = []
+
+        for eid in children:
+            wb = blockMap[eid]
+            if(wb['BlockType'] == "WORD"):
+                w = Word(wb, blockMap)
+                self._content.append(w)
+                t.append(w.text)
+            elif(wb['BlockType'] == "SELECTION_ELEMENT"):
+                se = SelectionElement(wb, blockMap)
+                self._content.append(se)
+                self._text = se.selectionStatus
+
+        if(t):
+            self._text = ' '.join(t)
+
+    def __str__(self):
+        return self._text
+
+    @property
+    def confidence(self):
+        return self._confidence
+
+    @property
+    def geometry(self):
+        return self._geometry
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def content(self):
+        return self._content
+
+    @property
+    def text(self):
+        return self._text
+
 class Field:
     def __init__(self, block, blockMap):
         self._key = None
@@ -190,7 +261,7 @@ class Field:
 
         for item in block['Relationships']:
             if(item["Type"] == "CHILD"):
-                self._key = FieldSet(block, item['Ids'], blockMap)
+                self._key = FieldKey(block, item['Ids'], blockMap)
             elif(item["Type"] == "VALUE"):
                 for eid in item['Ids']:
                     vkvs = blockMap[eid]
@@ -198,7 +269,7 @@ class Field:
                         if('Relationships' in vkvs):
                             for vitem in vkvs['Relationships']:
                                 if(vitem["Type"] == "CHILD"):
-                                    self._value = FieldSet(vkvs, vitem['Ids'], blockMap)
+                                    self._value = FieldValue(vkvs, vitem['Ids'], blockMap)
     def __str__(self):
         s = "\nField\n==========\n"
         k = ""
@@ -261,8 +332,10 @@ class Cell:
                             w = Word(blockMap[cid], blockMap)
                             self._content.append(w)
                             self._text = self._text + w.text + ' '
-                        #elif(blockType == "SELECTION_ELEMENT"):
-                            #print(blockMap[cid])
+                        elif(blockType == "SELECTION_ELEMENT"):
+                            se = SelectionElement(blockMap[cid], blockMap)
+                            self._content.append(se)
+                            self._text = self._text + se.selectionStatus + ', '
 
     def __str__(self):
         return self._text
@@ -372,7 +445,6 @@ class Page:
         self._blocks = blocks
         self._text = ""
         self._lines = []
-        self._words = []
         self._form = Form()
         self._tables = []
         self._content = []
@@ -402,12 +474,11 @@ class Page:
             elif item["BlockType"] == "KEY_VALUE_SET":
                 if 'KEY' in item['EntityTypes']:
                     f = Field(item, blockMap)
-                    #print(f)
                     if(f.key):
                         self._form.addField(f)
                         self._content.append(f)
                     else:
-                        print("Bad Key")
+                        print("Key does not have content.")
                         print(f)
                         print(item)
 
@@ -451,10 +522,6 @@ class Page:
     @property
     def lines(self):
         return self._lines
-
-    @property
-    def words(self):
-        return self._words
 
     @property
     def form(self):

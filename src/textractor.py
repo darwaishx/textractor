@@ -6,7 +6,6 @@ import time
 from tdp import DocumentProcessor
 from og import OutputGenerator
 from helper import FileHelper, S3Helper
-#import json
 
 class Textractor:
     def getInputParameters(self, args):

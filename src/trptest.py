@@ -2,6 +2,7 @@ from helper import FileHelper
 import json
 from trp import *
 from og import OutputGenerator
+from textractor import *
 
 def traverseDocument(doc):
     for page in doc.pages:
@@ -52,3 +53,4 @@ def run():
     generateOutput(filePath, response)
 
 run()
+

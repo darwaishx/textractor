@@ -12,6 +12,20 @@ class OutputGenerator:
 
         self.document = Document(self.response)
 
+    def _outputWords(self, page, p):
+        csvData = []
+        for line in page.lines:
+            for word in line.words:
+                csvItem  = []
+                csvItem.append(word.id)
+                if(word.text):
+                    csvItem.append(word.text)
+                else:
+                    csvItem.append("")
+                csvData.append(csvItem)
+        csvFieldNames = ['Word-Id', 'Word-Text']
+        FileHelper.writeCSV("{}-page-{}-words.csv".format(self.fileName, p), csvFieldNames, csvData)
+
     def _outputText(self, page, p):
         text = page.text
         FileHelper.writeToFile("{}-page-{}-text.txt".format(self.fileName, p), text)
@@ -69,6 +83,8 @@ class OutputGenerator:
         for page in self.document.pages:
 
             FileHelper.writeToFile("{}-page-{}-response.json".format(self.fileName, p), json.dumps(page.blocks))
+
+            self._outputWords(page, p)
 
             self._outputText(page, p)
 
