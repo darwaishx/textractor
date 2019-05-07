@@ -1,3 +1,5 @@
+This project has moved under AWS Samples: (AWS Samples)[https://github.com/aws-samples/amazon-textract-textractor]
+
 # Textractor
 
 You can use textractor to extract text, forms and tables from documents using Amazon Textract and generate output in different formats including raw JSON, JSON for each page in the document, text, text in reading order, key/values exported as CSV, tables exported as CSV. It can also generate insights or translate detected text by using Amazon Comprehend, Amazon Comprehend Medical and Amazon Translate.
@@ -114,3 +116,7 @@ for page in doc.pages:
 
 ## Cost
   - As you run this tool, it calls different APIs (Amazon Textract, optionally Amazon Comprehend, Amazon Comprehend Medical, Amazon Translate) in your AWS account. You will get charged for all the API calls made as part of the analysis.
+
+## License
+
+This library is licensed under the Apache 2.0 License. 
