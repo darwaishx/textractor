@@ -1,24 +1,21 @@
 from helper import FileHelper
 import json
-from trp import *
+from trp import Document
 from og import OutputGenerator
-from textractor import *
 
-def traverseDocument(doc):
+def processDocument(doc):
     for page in doc.pages:
+        print("PAGE\n====================")
         for line in page.lines:
             print("Line: {}--{}".format(line.text, line.confidence))
             for word in line.words:
                 print("Word: {}--{}".format(word.text, word.confidence))
         for table in page.tables:
-            print("TABLE")
-            r = 1
-            for row in table.rows:
-                c = 1
-                for cell in row.cells:
+            print("TABLE\n====================")
+            for r, row in enumerate(table.rows):
+                for c, cell in enumerate(row.cells):
                     print("Table[{}][{}] = {}-{}".format(r, c, cell.text, cell.confidence))
-                    c += 1
-                r += 1
+        print("Form (key/values)\n====================")
         for field in page.form.fields:
             k = ""
             v = ""
@@ -26,13 +23,21 @@ def traverseDocument(doc):
                 k = field.key.text
             if(field.value):
                 v = field.value.text
-            print("{}={}".format(k,v))
+            print("Field: Key: {}, Value: {}".format(k,v))
 
-        f = page.form.getFieldByName("Full Name:")
-        print("{}={}".format(f.key.text, f.value.text))
+        #Get field by key
+        key = "Phone Number:"
+        print("\nGet field by key ({}):\n====================".format(key))
+        f = page.form.getFieldByKey(key)
+        if(f):
+            print("Field: Key: {}, Value: {}".format(f.key.text, f.value.text))
 
-        print("\nPrinting Form\n=========")
-        print(page.form)
+        #Search field by key
+        key = "address"
+        print("\nSearch field by key ({}):\n====================".format(key))
+        fields = page.form.searchFieldsByKey(key)
+        for field in fields:
+            print("Field: Key: {}, Value: {}".format(field.key, field.value))
 
 def generateOutput(filePath, response):
     print("Generating output...")
@@ -49,8 +54,8 @@ def run():
     doc = Document(response)
 
     #print(doc)
-    #traverseDocument(doc)
-    generateOutput(filePath, response)
+    processDocument(doc)
+    #generateOutput(filePath, response)
 
 run()
 

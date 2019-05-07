@@ -68,6 +68,7 @@ class Geometry:
 
 class Word:
     def __init__(self, block, blockMap):
+        self._block = block
         self._confidence = block['Confidence']
         self._geometry = Geometry(block['Geometry'])
         self._id = block['Id']
@@ -94,9 +95,14 @@ class Word:
     def text(self):
         return self._text
 
+    @property
+    def block(self):
+        return self._block
+
 class Line:
     def __init__(self, block, blockMap):
 
+        self._block = block
         self._confidence = block['Confidence']
         self._geometry = Geometry(block['Geometry'])
         self._id = block['Id']
@@ -140,6 +146,10 @@ class Line:
     def text(self):
         return self._text
 
+    @property
+    def block(self):
+        return self._block
+
 class SelectionElement:
     def __init__(self, block, blockMap):
         self._confidence = block['Confidence']
@@ -163,9 +173,9 @@ class SelectionElement:
     def selectionStatus(self):
         return self._selectionStatus
 
-
 class FieldKey:
     def __init__(self, block, children, blockMap):
+        self._block = block
         self._confidence = block['Confidence']
         self._geometry = Geometry(block['Geometry'])
         self._id = block['Id']
@@ -207,8 +217,13 @@ class FieldKey:
     def text(self):
         return self._text
 
+    @property
+    def block(self):
+        return self._block
+
 class FieldValue:
     def __init__(self, block, children, blockMap):
+        self._block = block
         self._confidence = block['Confidence']
         self._geometry = Geometry(block['Geometry'])
         self._id = block['Id']
@@ -253,6 +268,10 @@ class FieldValue:
     @property
     def text(self):
         return self._text
+    
+    @property
+    def block(self):
+        return self._block
 
 class Field:
     def __init__(self, block, blockMap):
@@ -308,12 +327,24 @@ class Form:
     def fields(self):
         return self._fields
 
-    def getFieldByName(self, name):
-        return self._fieldsMap[name]
+    def getFieldByKey(self, key):
+        field = None
+        if(key in self._fieldsMap):
+            field = self._fieldsMap[key]
+        return field
+    
+    def searchFieldsByKey(self, key):
+        searchKey = key.lower()
+        results = []
+        for field in self._fields:
+            if(field.key and searchKey in field.key.text.lower()):
+                results.append(field)
+        return results
 
 class Cell:
 
     def __init__(self, block, blockMap):
+        self._block = block
         self._confidence = block['Confidence']
         self._rowIndex = block['RowIndex']
         self._columnIndex = block['ColumnIndex']
@@ -376,6 +407,10 @@ class Cell:
     def text(self):
         return self._text
 
+    @property
+    def block(self):
+        return self._block
+
 class Row:
     def __init__(self):
         self._cells = []
@@ -393,6 +428,8 @@ class Row:
 class Table:
 
     def __init__(self, block, blockMap):
+
+        self._block = block
 
         self._confidence = block['Confidence']
         self._geometry = Geometry(block['Geometry'])
@@ -439,6 +476,10 @@ class Table:
     def rows(self):
         return self._rows
 
+    @property
+    def block(self):
+        return self._block
+
 class Page:
 
     def __init__(self, blocks, blockMap):
@@ -478,7 +519,7 @@ class Page:
                         self._form.addField(f)
                         self._content.append(f)
                     else:
-                        print("Key does not have content.")
+                        print("WARNING: Detected K/V where key does not have content. Excluding key from output.")
                         print(f)
                         print(item)
 
@@ -587,19 +628,26 @@ class Document:
 
     def _parse(self):
 
-        self._responseDocumentPages, self.blockMap = self._parseDocumentPagesAndBlockMap()
+        self._responseDocumentPages, self._blockMap = self._parseDocumentPagesAndBlockMap()
         for documentPage in self._responseDocumentPages:
-            page = Page(documentPage["Blocks"], self.blockMap)
+            page = Page(documentPage["Blocks"], self._blockMap)
             self._pages.append(page)
 
     @property
-    def responsePages(self):
+    def blocks(self):
         return self._responsePages
 
     @property
-    def responseDocumentPages(self):
+    def pageBlocks(self):
         return self._responseDocumentPages
 
     @property
     def pages(self):
         return self._pages
+
+    def getBlockById(self, blockId):
+        block = None
+        if(self._blockMap and blockId in self._blockMap):
+            block = self._blockMap[blockId]
+        return block
+

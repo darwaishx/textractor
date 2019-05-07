@@ -68,10 +68,10 @@ Tool generates several files in the format below:
   | --translate  | Generate file with translation. |
 
 ## Source Code
-- [textractor.py](./src/textractor.py) is the entry point. It parses input arguments, and query S3 or local folder to get input documents. It then iterates over input documents and use [DocumentProcessor](./src/tdp.py) to get response from Amazon Textract APIs. [OutputGenerator](./src/og.py) is then used to generate output which takes advantage of [Document](./src/trp.py) to parse JSON response returned by Amazon Textract.
-- [DocumentProcessor](./src/tdp.py) takes document path, call Amazon Textract APIs, takes care of the paging etc. and return complete response for the document.
+- [textractor.py](./src/textractor.py) is the entry point. It parses input arguments, and query S3 or local folder to get input documents.
+- It then iterates over input documents and use [DocumentProcessor](./src/tdp.py) to get response from Amazon Textract APIs.
 - [OutputGenerator](./src/og.py) takes Textract response and uses [Document](./src/trp.py) to process response and generate output.
-- [Document](./src/trp.py) makes it easier to process response from Amazon Textract.
+- [Textract response parser](./src/trp.py) is used parse JSON response returned by Amazon Textract.
 
 ```
 
@@ -84,38 +84,33 @@ doc = Document(response)
 
 # Iterate over elements in the document
 for page in doc.pages:
+    # Print lines and words
     for line in page.lines:
         print("Line: {}--{}".format(line.text, line.confidence))
         for word in line.words:
             print("Word: {}--{}".format(word.text, word.confidence))
+    
+    # Print tables
     for table in page.tables:
-        print("TABLE")
-        r = 1
-        for row in table.rows:
-            c = 1
-            for cell in row.cells:
+        for r, row in enumerate(table.rows):
+            for c, cell in enumerate(row.cells):
                 print("Table[{}][{}] = {}-{}".format(r, c, cell.text, cell.confidence))
-                c += 1
-            r += 1
+
+    # Print fields
     for field in page.form.fields:
-        print("{}={}".format(field.key.text, field.value.text))
+        print("Field: Key: {}, Value: {}".format(field.key.text, field.value.text))
 
-# Document
-print(doc)
+    # Get field by key
+    key = "Phone Number:"
+    field = page.form.getFieldByKey(key)
+    if(field):
+        print("Field: Key: {}, Value: {}".format(field.key, field.value))
 
-# Individual Page
-print(doc.pages[0])
-
-# A cell in table
-print(doc.pages[0].tables[0].rows[0].cells[0].text)
-
-# A form field
-print(doc.pages[0].form.fields[0].key.text)
-print(doc.pages[0].form.fields[0].value.text)
-
-field = page.form.getFieldByName("Key")
-print(field.key.text)
-print(field.value.text)
+    # Search fields by key
+    key = "address"
+    fields = page.form.searchFieldsByKey(key)
+    for field in fields:
+        print("Field: Key: {}, Value: {}".format(field.key, field.value))
 
 ```
 
