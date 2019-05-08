@@ -1,4 +1,4 @@
-This project has moved under AWS Samples: [AWS Samples](https://github.com/aws-samples/amazon-textract-textractor).
+# This project has moved under [AWS Samples](https://github.com/aws-samples/amazon-textract-textractor).
 
 # Textractor
 
