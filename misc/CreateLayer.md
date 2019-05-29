@@ -25,7 +25,7 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html
 - zip -r boto3-layer.zip ./python
 - exit
 - mkdir layer
-- scp -i YOUR-KEY.pem ec2-user@YOUR-EC2-DNS.amazonaws.com:/home/ec2-user/boto3-layer.zip ./layer
+- scp -i YOUR-KEY.pem ec2-user@YOUR-EC2-DNS.amazonaws.com:/home/ec2-user/layer/boto3-layer.zip ./layer
 
 ## 3. Create Layer
 - In AWS Console go to Lambda
