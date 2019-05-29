@@ -15,8 +15,6 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html
 - sudo yum -y upgrade
 - sudo yum install python37
 - python3 --version
-- curl -O https://bootstrap.pypa.io/get-pip.py
-- python3 get-pip.py --user
 - mkdir layer
 - cd layer
 - mkdir python
